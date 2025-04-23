@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.payment.ethereum</groupId>
-    <artifactId>token-ethereum-core</artifactId>
+    <groupId>com.payment.sol</groupId>
+    <artifactId>token-sol</artifactId>
 
     <dependencies>
         <!-- token core依赖 -->
@@ -26,18 +26,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- web3j eth依赖 -->
+        <!-- jpa依赖 -->
         <dependency>
-            <groupId>org.web3j</groupId>
-            <artifactId>core</artifactId>
-            <version>4.5.5</version>
-        </dependency>
-
-        <!-- bitcoin核心依赖 -->
-        <dependency>
-            <groupId>org.bitcoinj</groupId>
-            <artifactId>bitcoinj-core</artifactId>
-            <version>0.15.9</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
     </dependencies>

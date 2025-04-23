@@ -15,6 +15,7 @@
         <module>token-core</module>
         <module>token-ethereum-core</module>
         <module>token-data-sync</module>
+        <module>token-sol</module>
     </modules>
 
     <name>token-pay</name>
