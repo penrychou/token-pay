@@ -1,0 +1,77 @@
+server:
+  port: 10004
+spring:
+  application:
+    name: tues-data-sync
+
+  # 源数据库配置（其他系统的数据库）
+  source-datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/source_db?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+
+  # 目标数据库配置（当前系统的数据库）
+  target-datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/target_db?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+
+  # Spring Batch配置
+  batch:
+    initialize-schema: always
+    job:
+      enabled: false # 禁用自动启动作业
+
+# 数据同步配置
+sync:
+  # 数据同步批次大小
+  batch-size: 1000
+  # 启动时是否执行同步
+  auto-sync: false
+  # 同步表配置
+  tables:
+    # 货币表
+    currency:
+      source-table: source_currency
+      target-table: pay_currency
+      id-field: id
+      mapping:
+        # 源字段: 目标字段
+        id: id
+        currency_name: currencyName
+        currency_logo: currencyLogo
+        currency_type: currencyType
+        # 其他字段映射...
+    # 充值表
+    recharge:
+      source-table: source_recharge
+      target-table: pay_recharge
+      id-field: id
+      mapping:
+        id: id
+        order_id: orderId
+        currency_id: currencyId
+        # 其他字段映射...
+    # 区块高度表
+    height:
+      source-table: source_height
+      target-table: pay_height
+      id-field: currency_id
+      mapping:
+        currency_id: currencyId
+        currency_name: currencyName
+        current_height: currentHeight
+        # 其他字段映射...
+    # 可根据需要添加其他表的映射配置 

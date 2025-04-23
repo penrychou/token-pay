@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>token-pay</artifactId>
+        <groupId>com.payment</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.payment.eth</groupId>
+    <artifactId>token-eth</artifactId>
+
+    <dependencies>
+        <!-- 以太坊核心依赖 -->
+        <dependency>
+            <groupId>com.payment.ethereum</groupId>
+            <artifactId>token-ethereum-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- jpa依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>
