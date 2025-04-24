@@ -1,4 +1,4 @@
-package com.payment.sol.task;
+package com.payment.eth.task;
 
 import com.payment.core.entity.Currency;
 import com.payment.core.entity.Height;

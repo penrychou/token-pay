@@ -1,4 +1,4 @@
-package com.payment.sol.controller;
+package com.payment.eth.controller;
 
 import com.payment.core.common.Result;
 import com.payment.core.common.response.RechargeResponse;

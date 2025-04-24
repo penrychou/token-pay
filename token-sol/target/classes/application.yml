@@ -5,19 +5,18 @@ spring:
     name: tues-eth
 
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: ENC(DI9iXNL4PUxC4zOhd4I00cbzB0TLicu9eb3RHNio4dDm6uinKLOhzuae0O73E6ImWCrcvSoc466PwyEkz5GP9kgUPcx+EGtSMFGiE4eLHfcQVz4FNP5cIA3AiFsnmClLLCPwrPwOcmi5ABG7xVfY4UyIrVAwBjZz9FvbZ4+2x2T1g0JH01x/EPC2J50xmqG6)
-    username: ENC(le89BOO33fezSsQl/4kzpg==)
-    password: ENC(K6vVvNk53bp61G9ncufyZm9qes75AwEO)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://ob-dev.huatianyunce.com.cn:2881/htyc_payment?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&allowMultiQueries=true&nullCatalogMeansCurrent=true
+    username: payment@htyc
+    password: Z]]8,AbYtgHdDsCT!i#[*H|1
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 
-ethereum:
-  currencyName: ETH
-  nodeurl: ENC(NyrPV0J3triDCbj+QidgOihNvV5H5zuuk3VGCDtUyOI8QIHvUJSgdOc3vnNkeT6h9xx/DVz5tmKipaz3TV44cam23HHLnU30) #节点地址,infura需包含PROJECT_ID
+sol:
+  currencyName: SOL
   keystorepath: D:/code/keystore
   keystorepassword: 123456
 jasypt:

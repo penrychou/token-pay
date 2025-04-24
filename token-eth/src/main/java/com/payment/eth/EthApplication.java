@@ -1,4 +1,4 @@
-package com.payment.sol;
+package com.payment.eth;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,12 +9,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-@ComponentScan(value = "com.whoiszxl.core")
-@ComponentScan(value = "com.whoiszxl.core.exception")
-@ComponentScan(value = "com.whoiszxl.eth")
-@ComponentScan(value = "com.whoiszxl.ethereum")
-@EntityScan(basePackages = {"com.whoiszxl.core.entity"})
-@EnableJpaRepositories(basePackages = {"com.whoiszxl.core.repository"})
+@ComponentScan(value = "com.payment.core")
+@ComponentScan(value = "com.payment.core.exception")
+@ComponentScan(value = "com.payment.eth")
+@ComponentScan(value = "com.payment.ethereum")
+@EntityScan(basePackages = {"com.payment.core.entity"})
+@EnableJpaRepositories(basePackages = {"com.payment.core.repository"})
 public class EthApplication {
 
     public static void main(String[] args) {

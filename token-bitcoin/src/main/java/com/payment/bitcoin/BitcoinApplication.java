@@ -9,11 +9,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-@ComponentScan(value = "com.whoiszxl.core")
-@ComponentScan(value = "com.whoiszxl.core.exception")
-@ComponentScan(value = "com.whoiszxl.bitcoin")
-@EntityScan(basePackages = {"com.whoiszxl.core.entity"})
-@EnableJpaRepositories(basePackages = {"com.whoiszxl.core.repository"})
+@ComponentScan(value = "com.payment.core")
+@ComponentScan(value = "com.payment.core.exception")
+@ComponentScan(value = "com.payment.bitcoin")
+@EntityScan(basePackages = {"com.payment.core.entity"})
+@EnableJpaRepositories(basePackages = {"com.payment.core.repository"})
 public class BitcoinApplication {
 
     public static void main(String[] args) {

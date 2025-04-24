@@ -1,12 +1,12 @@
 package com.payment.sol.service;
 
+import org.p2p.solanaj.rpc.types.Block;
+
 /***
  *
  **/
 public interface SolService {
-    Long getBlockchainHeight();
+    Long getBlockHeight();
 
-    EthBlock.Block getBlockByNumber(long l);
-
-    Transaction getTransactionByHash(String txHash);
+    Block getBlockByNumber(long l);
 }

@@ -32,6 +32,12 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.p2p</groupId>
+            <artifactId>solanaj</artifactId>
+            <version>1.7</version>
+        </dependency>
+
     </dependencies>
 
 </project>

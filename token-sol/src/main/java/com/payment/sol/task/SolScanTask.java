@@ -9,27 +9,28 @@ import com.payment.core.service.RechargeService;
 import com.payment.core.utils.AssertUtils;
 import com.payment.sol.service.SolService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.bitcoinj.core.Utils;
+import org.p2p.solanaj.programs.SystemProgram;
+import org.p2p.solanaj.rpc.types.Block;
+import org.p2p.solanaj.rpc.types.ConfirmedTransaction;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.web3j.protocol.core.methods.response.EthBlock;
-import org.web3j.protocol.core.methods.response.Transaction;
-import org.web3j.utils.Convert;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
 public class SolScanTask {
 
 
-    @Value("${ethereum.currencyName}")
+    @Value("${sol.currencyName}")
     private String currencyName;
 
     @Resource
@@ -54,7 +55,7 @@ public class SolScanTask {
         AssertUtils.isNotNull(ethInfo, "数据库未配置货币信息：" + currencyName);
 
         //获取到当前与网络区块高度
-        Long networkBlockHeight = solService.getBlockchainHeight();
+        Long networkBlockHeight = solService.getBlockHeight();
         Height heightObj = rechargeService.getCurrentHeight(currencyName);
         if(heightObj == null) {
             Height height = new Height();
@@ -73,40 +74,61 @@ public class SolScanTask {
 
         //扫描区块中的交易
         for(Integer i = currentHeight + 1; i <= networkBlockHeight; i++) {
-            EthBlock.Block block = solService.getBlockByNumber(i.longValue());
+            Block block = solService.getBlockByNumber(i.longValue());
 
-            List<EthBlock.TransactionResult> transactions = block.getTransactions();
+            List<ConfirmedTransaction> transactions = block.getTransactions();
 
-            for (EthBlock.TransactionResult transactionResult : transactions) {
-                EthBlock.TransactionObject transactionObject = (EthBlock.TransactionObject) transactionResult;
-                Transaction transaction = transactionObject.get();
+            for (ConfirmedTransaction confirmedTransaction : transactions) {
+                ConfirmedTransaction.Transaction transaction = confirmedTransaction.getTransaction();
 
-                if(StringUtils.isEmpty(transaction.getTo())) {
-                    log.info("交易{}不存在toAddress", transaction.getHash());
-                    continue;
+                ConfirmedTransaction.Message message = transaction.getMessage();
+                // 获取交易指令
+                List<ConfirmedTransaction.Instruction> instructions = message.getInstructions();
+
+                List<String> accountKeys = message.getAccountKeys();
+
+                // 是否是transfer交易
+                for (ConfirmedTransaction.Instruction instruction : instructions) {
+                    String programId = accountKeys.get(Math.toIntExact(instruction.getProgramIdIndex()));
+                    if(Objects.equals(programId, SystemProgram.PROGRAM_ID.toBase58())&& instruction.getData().getBytes().length==8){
+
+                    }
                 }
 
-                BigDecimal amount = Convert.fromWei(transaction.getValue().toString(), Convert.Unit.ETHER);
-                Recharge recharge = rechargeService.getRecharge(transaction.getTo(), currencyName, amount);
-                if(recharge == null) {
-                    log.info("地址不在库中：{}", transaction.getTo());
-                    continue;
-                }
+                for (ConfirmedTransaction.Instruction instruction :instructions){
+                    String fromAddress =  accountKeys.get(Math.toIntExact(instruction.getAccounts().get(0)));
+                    String toAddress = accountKeys.get(Math.toIntExact(instruction.getAccounts().get(1)));
 
-                recharge.setFromAddress(transaction.getFrom());
-                recharge.setTxHash(transaction.getHash());
-                recharge.setCurrentConfirm(transaction.getBlockNumber().subtract(BigInteger.valueOf(i)).intValue());
-                recharge.setHeight(transaction.getBlockNumber().intValue());
-                recharge.setUpchainAt(new Date(block.getTimestamp().longValue()));
-                recharge.setUpdatedAt(new Date());
+                    if(StringUtils.isEmpty(toAddress)) {
+                        log.info("交易{}不存在toAddress", toAddress);
+                        continue;
+                    }
 
-                if(i - block.getNumber().intValue() >= ethInfo.getConfirms()) {
-                    recharge.setUpchainStatus(UpchainStatusEnum.SUCCESS.getCode());
-                    recharge.setUpchainSuccessAt(new Date(block.getTimestamp().longValue()));
-                }else {
-                    recharge.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
+                    byte[] data = instruction.getData().getBytes();
+                    int lamports = Utils.readUint16(data, 4);
+
+
+                    BigDecimal amount = BigDecimal.valueOf(lamports);
+                    Recharge recharge = rechargeService.getRecharge(toAddress, currencyName, amount);
+                    if(recharge == null) {
+                        log.info("地址不在库中：{}", toAddress);
+                        continue;
+                    }
+                    recharge.setFromAddress(fromAddress);
+                    recharge.setTxHash(transaction.getSignatures().get(0));
+                    recharge.setCurrentConfirm(BigInteger.valueOf(Long.parseLong(block.getBlockHeight())).subtract(BigInteger.valueOf(i)).intValue());
+                    recharge.setHeight( Integer.parseInt(block.getBlockHeight()));
+                    recharge.setUpchainAt(new Date(block.getBlockTime()));
+                    recharge.setUpdatedAt(new Date());
+
+                    if(i - Integer.parseInt(block.getBlockHeight())>= ethInfo.getConfirms()) {
+                        recharge.setUpchainStatus(UpchainStatusEnum.SUCCESS.getCode());
+                        recharge.setUpchainSuccessAt(new Date(block.getBlockTime()));
+                    }else {
+                        recharge.setUpchainStatus(UpchainStatusEnum.WAITING_CONFIRM.getCode());
+                    }
+                    rechargeService.updateRecharge(recharge);
                 }
-                rechargeService.updateRecharge(recharge);
             }
 
         }
@@ -115,7 +137,6 @@ public class SolScanTask {
         heightObj.setCurrentHeight(networkBlockHeight.intValue());
         heightObj.setUpdatedAt(new Date());
         rechargeService.saveCurrentHeight(heightObj);
-
     }
 
 
@@ -133,7 +154,7 @@ public class SolScanTask {
         AssertUtils.isNotNull(ethInfo, "数据库未配置货币信息：" + currencyName);
 
         //1. 获取当前网络的区块高度
-        Long currentHeight = solService.getBlockchainHeight();
+        Long currentHeight = solService.getBlockHeight();
 
         //2. 查询到所有待确认的充值单
         List<Recharge> waitConfirmRecharge = rechargeService.getWaitConfirmRecharge(currencyName);

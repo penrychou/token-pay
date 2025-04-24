@@ -10,6 +10,7 @@ import com.payment.core.service.CurrencyService;
 import com.payment.core.service.RechargeService;
 import com.payment.core.utils.AssertUtils;
 import com.payment.sol.entity.SolAddress;
+import com.payment.sol.service.SolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -24,7 +26,7 @@ import java.util.Date;
 @RequestMapping("/sol")
 public class SolController {
 
-    @Value("${ethereum.currencyName}")
+    @Value("${sol.currencyName}")
     private String currencyName;
 
     @Autowired
@@ -32,6 +34,16 @@ public class SolController {
 
     @Autowired
     private RechargeService rechargeService;
+
+    @Resource
+    private SolService solService;
+
+
+    @GetMapping("/test")
+    public Result<?> test() {
+        return Result.buildSuccess(solService.getBlockHeight());
+    }
+
 
     /**
      * 创建一个充值单，通过业务系统传入相关联的订单号与金额入库到支付系统中，并会生成一个相应的货币地址

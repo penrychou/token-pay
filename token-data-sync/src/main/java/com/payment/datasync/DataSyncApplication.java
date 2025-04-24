@@ -16,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 @Slf4j
 @SpringBootApplication
 @EnableConfigurationProperties
-@ComponentScan(basePackages = {"com.whoiszxl.datasync", "com.whoiszxl.core"})
+@ComponentScan(basePackages = {"com.payment.datasync", "com.payment.core"})
 public class DataSyncApplication implements CommandLineRunner {
 
     @Autowired

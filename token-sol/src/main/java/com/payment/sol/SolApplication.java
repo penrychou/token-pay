@@ -9,15 +9,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-@ComponentScan(value = "com.whoiszxl.core")
-@ComponentScan(value = "com.whoiszxl.core.exception")
-@ComponentScan(value = "com.whoiszxl.eth")
-@ComponentScan(value = "com.whoiszxl.ethereum")
-@EntityScan(basePackages = {"com.whoiszxl.core.entity"})
-@EnableJpaRepositories(basePackages = {"com.whoiszxl.core.repository"})
-public class EthApplication {
+@ComponentScan(value = "com.payment.core")
+@ComponentScan(value = "com.payment.core.exception")
+@ComponentScan(value = "com.payment.sol")
+@EntityScan(basePackages = {"com.payment.core.entity"})
+@EnableJpaRepositories(basePackages = {"com.payment.core.repository"})
+public class SolApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EthApplication.class, args);
+        SpringApplication.run(SolApplication.class, args);
     }
 }
