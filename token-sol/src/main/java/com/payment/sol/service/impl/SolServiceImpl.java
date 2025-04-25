@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.p2p.solanaj.rpc.RpcClient;
 import org.p2p.solanaj.rpc.RpcException;
 import org.p2p.solanaj.rpc.types.Block;
+import org.p2p.solanaj.rpc.types.ConfirmedTransaction;
 import org.p2p.solanaj.rpc.types.config.Commitment;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,17 @@ public class SolServiceImpl implements SolService {
         try {
             return rpcClient.getApi().getBlock((int) l);
         } catch (RpcException e) {
-            log.error("获取区块高度失败", e);
+            log.error("获取区块失败", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ConfirmedTransaction getTransactionByHash(String txHash) {
+        try {
+            return rpcClient.getApi().getConfirmedTransaction(txHash);
+        } catch (RpcException e) {
+            log.error("获取交易失败", e);
             throw new RuntimeException(e);
         }
     }

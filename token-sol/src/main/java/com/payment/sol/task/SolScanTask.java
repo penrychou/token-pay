@@ -162,14 +162,14 @@ public class SolScanTask {
 
         //3. 遍历库中交易进行判断是否成功
         for (Recharge recharge : waitConfirmRecharge) {
-            Transaction transaction = solService.getTransactionByHash(recharge.getTxHash());
+            ConfirmedTransaction transaction = solService.getTransactionByHash(recharge.getTxHash());
 
             //如果链上交易确认数大于等于配置的确认数，则更新充值单为成功并更新上链成功时间，否则只更新当前确认数。
-            if(currentHeight - transaction.getBlockNumber().longValue()  >= ethInfo.getConfirms()) {
+            if(currentHeight - recharge.getHeight()  >= ethInfo.getConfirms()) {
                 recharge.setUpchainStatus(UpchainStatusEnum.SUCCESS.getCode());
                 recharge.setUpchainSuccessAt(new Date());
             }
-            recharge.setCurrentConfirm((int) (currentHeight - transaction.getBlockNumber().longValue()));
+            recharge.setCurrentConfirm((int) (currentHeight - recharge.getHeight()));
             recharge.setUpdatedAt(new Date());
 
             rechargeService.saveRecharge(recharge);
